@@ -8,7 +8,7 @@
                 <a class="button" href="/contact">Contact</a>
             </div>
             <div class="column has-text-centered">
-                <img src="../assets/images/404.gif" />
+                <img src="../assets/images/404.gif"/>
             </div>
         </div>
     </div>
