@@ -1,4 +1,4 @@
-<?php
+<?php global $db;
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = $_POST['username'];
     $email = $_POST['email'];
@@ -9,17 +9,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         return;
     }
 
-    $db->query("INSERT INTO users (name, email, password) VALUES ('$username', '$email', '$password')");
+    if(empty($username)){
+        $username = ucfirst(explode('@', $email)[0]);
+    }
 
-    redirect("auth/login");
+    try {
+        $db->query("INSERT INTO users (name, email, password) VALUES ('$username', '$email', '$password')");
+        redirect("auth/login");
+    } catch (Exception $e) {
+        array_push($errors, $e->getMessage());
+    }
 }
 ?>
 <section class="container">
+    <h1 class="heading has-text-centered" style="font-size: 1.125rem; font-weight: bold">Register</h1>
     <form class="box register" method="post">
         <div class="field">
             <p class="control has-icons-left has-icons-right">
                 <label class="label">Username</label>
-                <input class="input" type="text" placeholder="Username (optional)" name="username" autocomplete="username">
+                <input class="input" type="text" placeholder="Username (optional)" name="username"
+                       autocomplete="off">
                 <span class=" icon is-small is-left">
                 <i class="fas fa-envelope"></i>
                 </span>

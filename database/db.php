@@ -6,11 +6,7 @@ class DB
 
     function __construct($location)
     {
-        $this->db = new SQLite3($location);
-        if (!$this->db) {
-            array_push($this->errors, "SQLiteDatabase Error: " . $this->lastErrorMsg());
-            throw new Exception("SQLiteDatabase Error: " . $this->lastErrorMsg());
-        }
+        $this->db = new SQLite3($location,SQLITE3_OPEN_READWRITE, null);
     }
 
     function __destruct()
@@ -23,6 +19,9 @@ class DB
         return $this->db->lastErrorMsg();
     }
 
+    /**
+     * @throws Exception
+     */
     function query($sql, ...$params)
     {
         if (count($params) > 0) {

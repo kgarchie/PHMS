@@ -1,5 +1,5 @@
 <header>
-    <nav class="navbar" role="navigation" aria-label="main navigation">
+    <nav class="box is-flex p-2" role="navigation" aria-label="main navigation">
         <div class="navbar-brand">
             <a class="navbar-item" href="/home">
                 <span class="logo">PHMS</span>
@@ -41,12 +41,18 @@
             <div class="navbar-end">
                 <div class="navbar-item">
                     <div class="buttons">
-                        <a class="button is-primary" href="/auth/register">
-                            <strong>Sign up</strong>
-                        </a>
-                        <a class="button is-light" href="/auth/login">
-                            Log in
-                        </a>
+                        <?php if (isAuthenticated()) : ?>
+                            <a class="button is-dark" href="/auth/logout" id="logout">
+                                <strong>Logout</strong>
+                            </a>
+                        <?php else : ?>
+                            <a class="button is-primary" href="/auth/register">
+                                <strong>Sign up</strong>
+                            </a>
+                            <a class="button is-light" href="/auth/login">
+                                Log in
+                            </a>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>
