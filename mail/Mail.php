@@ -23,8 +23,9 @@ class Mail
         ];
     }
 
-    public function send($to, $subject, $body): bool
+    public function send($to, $subject, $body, $debug = false): bool
     {
+        if ($debug) return print_r($to, $subject, $body);
         $this->mailer->isSMTP();
         $this->mailer->Host = $this->config['host'];
         $this->mailer->SMTPAuth = true;

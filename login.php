@@ -8,21 +8,11 @@ global $db;
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $email = $_POST['email'];
     $password = $_POST['password'];
-
-    [$result, $error] = value_or_error($db->query("SELECT * FROM users WHERE `email` = ? AND `password` = ?", $email, $password));
-    if ($error) return array_push($errors, $error);
-
-    $user = DB::first($result);
-    if (!$user) return array_push($errors, "Invalid Email or Password");
-
-    $user_id = DB::getField($user, "id");
-
-    $token = uniqid();
-    [$result, $error] = value_or_error($db->query("INSERT INTO sessions (`user_id`, `token`) VALUES (?, ?)", $user_id, $token));
-    if ($error) return array_push($errors, $error);
-
-    setAuthCookie($token);
-    redirect("/dashboard.php");
+    $token = authenticate($email, $password);
+    if ($token) {
+        setAuthCookie($token);
+        redirect("/dashboard.php");
+    }
 }
 ?>
 <body>
@@ -34,15 +24,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <input type="email" class="form-control" id="email" aria-describedby="emailHelp" name="email">
             <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
         </div>
-        <div class="mb-3">
+        <div class="mb-3 position-relative">
             <label for="password" class="form-label">Password</label>
             <input type="password" class="form-control" id="password" name="password">
+            <small class="text-muted position-absolute end-0">Forgot Password? <a href="/request-password-reset.php">Reset</a></small>
         </div>
-        <div class="mb-3 form-check">
-            <input type="checkbox" class="form-check-input" id="check">
-            <label class="form-check-label" for="check">Check me out</label>
+        <div class="btn-group d-block">
+            <button type="submit" class="btn btn-primary">Submit</button>
         </div>
-        <button type="submit" class="btn btn-primary">Submit</button>
+        <small class="text-muted">Don't have an account? <a href="/register.php">Sign Up</a></small>
         <script>
             const form = document.querySelector('#login-form');
             form.addEventListener('submit', (e) => {

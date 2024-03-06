@@ -1,16 +1,29 @@
-CREATE TABLE IF NOT EXISTS users
+create table if not exists `users`
 (
-    `id`       INT PRIMARY KEY AUTO_INCREMENT,
-    `name`     VARCHAR(255) NOT NULL,
-    `email`    VARCHAR(255) NOT NULL UNIQUE,
-    `password` VARCHAR(512) NOT NULL
+    `id`         integer      not null primary key,
+    `name`       varchar(255) not null,
+    `email`      varchar(255) not null unique,
+    `password`   varchar(255) not null,
+    `created_at` timestamp    not null default current_timestamp,
+    `updated_at` timestamp    not null default current_timestamp
+);
+create table if not exists `tokens`
+(
+    `id`         integer      not null primary key,
+    `user_id`    integer      not null,
+    `token`      varchar(255) not null unique,
+    `is_valid`   boolean      not null default true,
+    `created_at` timestamp    not null default current_timestamp,
+    `updated_at` timestamp    not null default current_timestamp,
+    foreign key (`user_id`) references `users` (`id`)
 );
 
-CREATE TABLE IF NOT EXISTS sessions
-(
-    id      INT PRIMARY KEY AUTO_INCREMENT,
-    user_id INT NOT NULL,
-    token VARCHAR(255),
-    is_valid BOOLEAN DEFAULT true,
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
-);
+create trigger if not exists [UpdateLastTime]
+    after update
+    on `tokens`
+    for each row
+begin
+    update `tokens`
+    set `updated_at` = CURRENT_TIMESTAMP
+    where RowId = old.RowId;
+end;

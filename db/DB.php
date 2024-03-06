@@ -1,4 +1,55 @@
 <?php
+
+class Row {
+    private $row = null;
+    public function __construct($row)
+    {
+        $this->row = $row;
+    }
+
+    function get($key)
+    {
+        if (!$this->row) return null;
+        if (!isset($this->row[$key])) return null;
+        return $this->row[$key];
+    }
+
+    public function __toString()
+    {
+        return json_encode($this->row);
+    }
+}
+
+class Result {
+    private $result = null;
+    public function __construct(array $result)
+    {
+        $this->result = $result;
+    }
+
+    function at($index): ?Row
+    {
+        if (!$this->result) return null;
+        if (!isset($this->result[$index])) return null;
+        return new Row($this->result[$index]);
+    }
+
+    function first(): ?Row
+    {
+        return $this->at(0);
+    }
+
+    function last(): ?Row
+    {
+        return $this->at(count($this->result) - 1);
+    }
+
+    public function __toString()
+    {
+        return json_encode($this->result);
+    }
+}
+
 class DB
 {
     private $db;
@@ -6,12 +57,12 @@ class DB
     /**
      * @throws Exception
      */
-    function __construct($host, $username, $password, $database)
+    function __construct($location)
     {
-        try{
-            $this->db = new PDO("mysql:host=$host;dbname=$database", $username, $password);
+        try {
+            $this->db = new PDO("sqlite:$location");
             $this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        } catch (PDOException $e){
+        } catch (PDOException $e) {
             die("Unable to connect to database");
         }
     }
@@ -21,53 +72,34 @@ class DB
         $this->db = null;
     }
 
-
     /**
-     * @throws Exception
-     *
      * @example
+     * [$result, $error] = $db->query("INSERT INTO tname VALUES ?, ?, ?", $value1, $value2, $value3)
      *
-     * $db->query("INSERT INTO tname VALUES ?, ?, ?", $value1, $value2, $value3)
+     * @return array{?Result, ?string}
      */
-    function query($sql, ...$params)
+    function query(string $sql, ...$params): array
     {
-        if(count($params) > 0){
-            $stmt = $this->db->prepare($sql);
+        try {
+            if (count($params) > 0) {
+                $stmt = $this->db->prepare($sql);
+                $placeholderCount = substr_count($sql, '?');
 
-            $placeholderCount = substr_count($sql, '?');
+                if ($placeholderCount !== count($params))
+                    return [null, "Parameter count mismatch: Expected $placeholderCount, got " . count($params)];
 
-            if ($placeholderCount !== count($params)) {
-                throw new Exception("Parameter count mismatch: Expected $placeholderCount, got " . count($params));
+                $stmt->execute($params);
+                return [new Result($stmt->fetchAll()), null];
+            } else {
+                $result = $this->db->query($sql);
+                if (!$result) return [null, "Failed to execute the query: " . $sql];
+
+                return [new Result($result->fetchAll()), null];
             }
-
-            $stmt->execute($params);
-            return $stmt->fetchAll();
-        } else {
-            $result = $this->db->query($sql);
-            if (!$result) {
-                throw new Exception("Failed to execute the query: " . $sql);
-            }
-
-            return $result->fetchAll();
+        } catch (Exception $e) {
+            return [null, $e->getMessage()];
         }
-    }
-
-    /**
-     * Returns the first result of an execution
-     * @param $result
-     * @return
-     */
-    static function first($result){
-        if(!$result) return null;
-        if(!isset($result[0])) return null;
-        return $result[0];
-    }
-
-    static function getField($result, $field){
-        if(!$result) return null;
-        if(!isset($result[$field])) return null;
-        return $result[$field];
     }
 }
 
-$db = new DB("localhost", "root", "", "myproject");
+$db = new DB("./db/db.sqlite");

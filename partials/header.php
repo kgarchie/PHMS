@@ -30,9 +30,9 @@
             </ul>
             <div class="d-flex btn-group" role="search">
                 <?php
-                    if (getAuthCookie()) {
-                        echo '<a href="/login.php" class="btn btn-success" style="margin-right: 1rem">Login</a>';
-                        echo '<a href="/register.php" class="btn btn-outline-success">Sign Up</a>';
+                    if (!getAuthCookie()) {
+                        echo '<a href="/login.php" class="btn btn-success me-2">Login</a>';
+                        echo '<a href="/register.php" class="btn btn-outline-success me-2">Sign Up</a>';
                     } else {
                         echo '<a href="/logout.php" class="btn btn-secondary">Logout</a>';
                     }

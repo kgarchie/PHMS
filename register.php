@@ -12,25 +12,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $password = $_POST['password'];
     $email = $_POST['email'];
 
-    [$result, $error] = value_or_error($db->query("INSERT INTO users (`name`, `email`, `password`) VALUES (?, ?, ?)", $name, $email, $password));
+    [$result, $error] = $db->query("INSERT INTO users (`name`, `email`, `password`) VALUES (?, ?, ?)", $name, $email, $password);
     if ($error) return array_push($errors, $error);
 
-    $user = DB::first($result);
-    if (!$user) return array_push($errors, "Unknown Error Occurred");
-
-    $token = uniqid();
-    [$result, $error] = value_or_error($db->query("INSERT INTO sessions (`user_id`, `token`) VALUES (?, ?)", DB::getField($user, "id"), $token));
-    if ($error) return array_push($errors, $error);
-
-    setAuthCookie($token);
-    redirect("/dashboard.php");
+    $token = authenticate($email, $password);
+    if ($token) {
+        setAuthCookie($token);
+        redirect("/dashboard.php");
+    }
 }
 ?>
 <main class="container">
     <form action="register.php" method="POST" class="w-50 mx-auto mt-5 shadow-sm p-4 rounded" id="register-form">
         <div class="mb-3">
             <label for="username" class="form-label">Username</label>
-            <input type="text" class="form-control" id="username" aria-describedby="usernameHelp" name="username" autocomplete="username">
+            <input type="text" class="form-control" id="username" aria-describedby="usernameHelp" name="name" autocomplete="off">
         </div>
         <div class="mb-3">
             <label for="email" class="form-label">Email address</label>
