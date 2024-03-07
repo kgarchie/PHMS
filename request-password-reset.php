@@ -61,7 +61,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
             form.addEventListener('submit', (e) => {
                 e.preventDefault();
                 const email = form.querySelector('#email').value;
-                if (!email {
+                if (!email) {
                     alert('Please fill in all fields');
                     return;
                 }
