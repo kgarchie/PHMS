@@ -1,72 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PHMS</title>
-    <link rel="stylesheet" href="./assets/css/bulma/bulma.min.css">
-    <link rel="stylesheet" href="./assets/css/style.css">
-</head>
-
-<body>
-    <!-- DO NOT TOUCH -->
-    <?php $errors = array(); ?>
-    <?php require_once('./database/connection.php'); ?>
-    <main class="__main">
-        <div class="__head">
-            <?php include('./pages/partial/header.php'); ?>
+<?php include 'partials/head.php'; ?>
+<body class="wrapper">
+<?php include 'partials/header.php'; ?>
+<main class="main">
+    <img src="/assets/images/phms4.jpg" alt="" class="object-fit-cover w-50 position-absolute top-0 z-n1 h-100 end-0">
+    <div class="container w-50 p-4 bg-body-tertiary shadow-sm position-absolute top-50 start-50 translate-middle border border-1 border-dark-subtle rounded" style="margin-top: -50px">
+        <p>
+            Adipisci alias amet aperiam aspernatur assumenda atque autem, beatae
+            commodi consequatur cumque delectus doloremque doloribus ducimus eligendi eos esse est eum ex
+            explicabo facere fugiat harum id illum impedit.
+        </p>
+        <div>
+            <a class="btn btn-primary" href="dashboard.php">Get Started</a>
         </div>
-        <div class="__body">
-            <?php
-                $url = $_SERVER['REQUEST_URI'];
-                $path = parse_url($url, PHP_URL_PATH);
-
-                if ($path !== '/' && $path !== '/index.php') {
-                    include './pages/404.php';
-                    return;
-                }
-
-                if (isset($_GET['page'])) {
-                    $page = $_GET['page'];
-                    if ($page === "") {
-                        include "./pages/home.php";
-                    } else {
-                        if (file_exists('./pages/' . $page . '.php')) {
-                            include './pages/' . $page . '.php';
-                        } else {
-                            include './pages/404.php';
-                        }
-                    }
-                } else {
-                    include './pages/home.php';
-                }
-            ?>
-        </div>
-        <div class="__foot">
-            <?php include('./pages/partial/footer.php') ?>
-        </div>
-    </main>
-    <style>
-        .__main {
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
-
-        .__head {
-            flex: 0 0 auto;
-        }
-
-        .__body {
-            flex: 1 1 auto;
-        }
-
-        .__foot {
-            flex: 0 0 auto;
-        }
-    </style>
-    <script src="./assets/js/main.js"></script>
+    </div>
+</main>
+<?php include 'partials/footer.php'; ?>
 </body>
-
 </html>
