@@ -20,7 +20,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
     $user_id = $user->get('id');
     $password = $_POST['password'];
 
-    [$result, $error] = $db->query("UPDATE users SET password = ? WHERE id = ?", $password, $user_id);
+    [$result, $error] = $db->query("UPDATE users SET password = ? WHERE id = ?", password_hash($password, PASSWORD_DEFAULT), $user_id);
     if ($error) return array_push($errors, $error);
 
     [$result, $error] = $db->query("UPDATE tokens SET is_valid = false WHERE user_id = ?", $user_id);
@@ -30,7 +30,17 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
 }
 ?>
 <main>
-
+    <form action="update-password.php?token=<?php echo $_GET['token'] ?>" method="POST" class="w-50 mx-auto mt-5 shadow-sm p-4 rounded" id="reset-form">
+        <div class="mb-3">
+            <label for="password" class="form-label">New Password</label>
+            <input type="password" class="form-control" id="password" name="password" autocomplete="password">
+        </div>
+        <div class="btn-group d-flex">
+            <button type="submit" class="btn btn-primary">Submit</button>
+            <a class="btn btn-outline-secondary" href="/">Cancel</a>
+        </div>
+        <small class="text-muted">Don't have an account? <a href="/register.php">Sign Up</a></small>
+    </form>
 </main>
 
 <!---------------------------------------------------------------------------------->

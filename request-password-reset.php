@@ -20,26 +20,25 @@ function getPasswordResetToken($email)
         return null;
     }
 
-    [$result, $error] = $db->query("INSERT INTO tokens (`user_id`, `token`) VALUES (?, ?)", $user->get('id'), uniqid());
+    $token = uniqid();
+    [$_, $error] = $db->query("INSERT INTO tokens (`user_id`, `token`) VALUES (?, ?)", $user->get('id'), $token);
     if ($error) {
         array_push($errors, $error);
         return null;
     }
 
-    return $result->first()->get('token');
+    return $token;
 }
 
 if($_SERVER['REQUEST_METHOD'] == 'POST') {
     $email = $_POST['email'];
-
-    if (empty($email)) return array_push($errors, "Email is required");
     $token = getPasswordResetToken($email);
 
     if ($token) {
         $body = "Click <a href='http://localhost:8080/update-password.php?token=$token'>here</a> to reset your password";
         $mail->send($email, "Password Reset", $body, true);
 
-        redirect("/");
+        redirect("success-password-request.php");
     }
 }
 ?>

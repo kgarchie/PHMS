@@ -23,9 +23,15 @@ class Mail
         ];
     }
 
-    public function send($to, $subject, $body, $debug = false): bool
+    /**
+     * @param $to
+     * @param $subject
+     * @param $body
+     * @param bool $debug
+     * @return array{bool|null, string|null}
+     */
+    public function send($to, $subject, $body): array
     {
-        if ($debug) return print_r($to, $subject, $body);
         $this->mailer->isSMTP();
         $this->mailer->Host = $this->config['host'];
         $this->mailer->SMTPAuth = true;
@@ -34,14 +40,20 @@ class Mail
         $this->mailer->SMTPSecure = $this->config['secure'];
         $this->mailer->Port = $this->config['port'];
 
-        $this->mailer->setFrom($this->config['from']);
-        $this->mailer->addAddress($to);
+        try {
+            $this->mailer->setFrom($this->config['from']);
+            $this->mailer->addAddress($to);
 
-        $this->mailer->isHTML(true);
-        $this->mailer->Subject = $subject;
-        $this->mailer->Body = $body;
+            $this->mailer->isHTML(true);
+            $this->mailer->Subject = $subject;
+            $this->mailer->Body = $body;
 
-        return $this->mailer->send();
+            $this->mailer->send();
+        } catch (Exception $e) {
+            return [null, $e->getMessage()];
+        }
+
+        return [true, null];
     }
 }
 
