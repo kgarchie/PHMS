@@ -1,4 +1,4 @@
-<!doctype html>
+<!Doctype html>
 <html lang="en">
 <?php include 'partials/head.php'; ?>
 <body>
