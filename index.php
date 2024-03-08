@@ -12,7 +12,7 @@
             explicabo facere fugiat harum id illum impedit.
         </p>
         <div>
-            <a class="btn btn-primary" href="dashboard.php">Get Started</a>
+            <a class="btn btn-primary" href="/dashboard.php">Get Started</a>
         </div>
     </div>
 </main>

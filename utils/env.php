@@ -10,7 +10,3 @@ if(file_exists("./.env")) {
 } else {
     echo "No .env loaded";
 }
-
-
-// usage
-echo getenv('DB_HOST');

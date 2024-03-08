@@ -7,6 +7,7 @@ create table if not exists `users`
     `created_at` timestamp    not null default current_timestamp,
     `updated_at` timestamp    not null default current_timestamp
 );
+
 create table if not exists `tokens`
 (
     `id`         integer      not null primary key,

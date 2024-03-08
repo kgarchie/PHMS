@@ -4,7 +4,7 @@
 <body>
 <?php include 'partials/header.php' ?>
 <?php if (!getAuthCookie()) redirect("login.php"); ?>
-<main class="main">
+<main class="container">
     <h1>Dashboard</h1>
     <p>Welcome to the dashboard</p>
 </main>

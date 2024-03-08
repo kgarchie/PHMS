@@ -6,12 +6,16 @@ global $errors;
 global $db;
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $email = $_POST['email'];
-    $password = $_POST['password'];
-    $token = authenticate($email, $password);
-    if ($token) {
-        setAuthCookie($token);
-        redirect("/dashboard.php");
+    if (isset($_POST['email']) && isset($_POST['password'])) {
+        $email = $_POST['email'];
+        $password = $_POST['password'];
+        $token = authenticate($email, $password);
+        if ($token) {
+            setAuthCookie($token);
+            redirect("/dashboard.php");
+        }
+    } else {
+        array_push($errors, "Please fill in all fields");
     }
 }
 ?>
