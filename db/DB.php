@@ -48,6 +48,11 @@ class Result {
     {
         return json_encode($this->result);
     }
+
+    public function count(): int
+    {
+        return count($this->result);
+    }
 }
 
 class DB
@@ -73,10 +78,10 @@ class DB
     }
 
     /**
+     * @return array{?Result, ?string}
+     *
      * @example
      * [$result, $error] = $db->query("INSERT INTO tname VALUES ?, ?, ?", $value1, $value2, $value3)
-     *
-     * @return array{?Result, ?string}
      */
     function query(string $sql, ...$params): array
     {

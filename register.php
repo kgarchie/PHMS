@@ -11,7 +11,7 @@
     function createUser($name, $email, $password)
     {
         global $errors, $db;
-        [$result, $error] = $db->query("INSERT INTO users (`name`, `email`, `password`) VALUES (?, ?, ?)", $name, $email, password_hash($password, PASSWORD_DEFAULT));
+        [$result, $error] = $db->query("INSERT INTO users (`name`, `email`, `password`) VALUES (?, ?, ?)", $name, strtolower($email), password_hash($password, PASSWORD_DEFAULT));
         if ($error) {
             array_push($errors, $error);
             return null;

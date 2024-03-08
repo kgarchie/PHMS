@@ -31,16 +31,10 @@ function getAuthCookie(): ?string
 function authenticate($email, $password): ?string
 {
     global $errors, $db;
-    [$result, $error] = $db->query("SELECT * FROM users WHERE `email` = ?", $email);
 
-    if ($error) {
-        array_push($errors, $error);
-        return null;
-    }
-
-    $user = $result->first();
+    $user = getUserByEmail($email);
     if (!$user) {
-        array_push($errors, "Invalid Email or Password");
+        array_push($errors, "No such user found with that email");
         return null;
     };
 
@@ -59,6 +53,22 @@ function authenticate($email, $password): ?string
     }
 
     return $token;
+}
+
+function getUserByEmail($email): ?Row
+{
+    global $errors, $db;
+    [$result, $error] = $db->query("SELECT * FROM users WHERE `email` = ?", strtolower($email));
+    if ($error) {
+        array_push($errors, $error);
+        return null;
+    }
+
+    if ($result->count() === 0) {
+        return null;
+    }
+
+    return $result->first();
 }
 
 function getOrigin(): string
@@ -80,7 +90,7 @@ function generateToken($email): ?string
         return null;
     }
 
-    [$result, $error] = $db->query("SELECT * FROM users WHERE `email` = ?", $email);
+    [$result, $error] = $db->query("SELECT * FROM users WHERE `email` = ?", strtolower($email));
     if ($error) {
         array_push($errors, $error);
         return null;
