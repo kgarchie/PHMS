@@ -1,7 +1,9 @@
 <?php
 
-class Row {
+class Row
+{
     private $row = null;
+
     public function __construct($row)
     {
         $this->row = $row;
@@ -18,10 +20,17 @@ class Row {
     {
         return json_encode($this->row);
     }
+
+    public function row()
+    {
+        return $this->row;
+    }
 }
 
-class Result {
+class Result
+{
     private $result = null;
+
     public function __construct(array $result)
     {
         $this->result = $result;
@@ -49,9 +58,28 @@ class Result {
         return json_encode($this->result);
     }
 
+    /**
+     * @return array{Row[]}
+     */
+    public function all(): array
+    {
+        return $this->result;
+    }
+
     public function count(): int
     {
         return count($this->result);
+    }
+
+    public function isEmpty(): bool
+    {
+        return $this->count() === 0;
+    }
+
+
+    public function toJson()
+    {
+        return json_encode($this->result);
     }
 }
 
@@ -68,7 +96,7 @@ class DB
             $this->db = new PDO("sqlite:$location");
             $this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         } catch (PDOException $e) {
-            die("Unable to connect to database");
+            throw new Exception($e->getMessage());
         }
     }
 
@@ -107,4 +135,6 @@ class DB
     }
 }
 
+
 $db = new DB("./db/db.sqlite");
+

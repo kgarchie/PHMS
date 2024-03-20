@@ -22,7 +22,7 @@
 
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if (isset($_POST['email']) && isset($_POST['password'])) {
-            if(!isset($_POST['name'])) {
+            if (!isset($_POST['name'])) {
                 $name = explode('@', $_POST['email'])[0];
             } else {
                 $name = $_POST['name'];
@@ -42,14 +42,14 @@
     }
     ?>
     <main class="container">
-        <form action="register.php" method="POST" class="w-50 mx-auto mt-5 shadow-sm p-4 rounded" id="register-form">
+        <form action="/register.php" method="POST" class="w-50 mx-auto mt-5 shadow-sm p-4 rounded" id="register-form">
             <div class="mb-3">
                 <label for="username" class="form-label">Username</label>
                 <input type="text" class="form-control" id="username" aria-describedby="usernameHelp" name="name" autocomplete="off">
             </div>
             <div class="mb-3">
                 <label for="email" class="form-label">Email address</label>
-                <input type="email" class="form-control" id="email" aria-describedby="emailHelp" name="email" autocomplete="email">
+                <input type="email" class="form-control" id="email" aria-describedby="emailHelp" name="email" autocomplete="off">
                 <small id="emailHelp" class="form-text">We'll never share your email with anyone else.</small>
             </div>
             <div class="mb-3">
@@ -62,7 +62,12 @@
             </div>
             <div class="d-flex justify-content-between align-items-center">
                 <button type="submit" class="btn btn-primary d-inline-block">Submit</button>
-                <small class="text-muted">Already have an account? <a href="/login.php">Login</a></small>
+                <div class="d-flex flex-column mt-2">
+                    <small class="text-muted">Already have an account? <a href="/login.php">Login</a></small>
+                    <small class="text-muted small">Register as
+                        <button class="nav-link d-inline fw-bold" type="button" onclick="registerAdmin()">Admin</button>
+                    </small>
+                </div>
             </div>
             <script>
                 const form = document.querySelector('#register-form');
@@ -78,6 +83,19 @@
                     }
                     form.submit();
                 });
+
+                function registerAdmin() {
+                    const username = form.querySelector('#username').value;
+                    const email = form.querySelector('#email').value;
+                    const password = form.querySelector('#password').value;
+                    const check = form.querySelector('#check').checked;
+                    if (!username || !email || !password || !check) {
+                        alert('Please fill in all fields');
+                        return;
+                    }
+                    form.action = '/admin_register.php';
+                    form.submit();
+                }
             </script>
         </form>
     </main>

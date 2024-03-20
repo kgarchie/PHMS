@@ -47,3 +47,4 @@
     </ul>
 </footer>
 <?php include "partials/errors.php" ?>
+<?php include "partials/successes.php" ?>

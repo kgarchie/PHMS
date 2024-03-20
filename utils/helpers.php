@@ -85,7 +85,7 @@ function getOrigin(): string
 function generateToken($email): ?string
 {
     global $errors, $db;
-    if(!isset($email)) {
+    if (!isset($email)) {
         array_push($errors, "No email provided for token generation");
         return null;
     }
@@ -110,4 +110,10 @@ function generateToken($email): ?string
     }
 
     return $token;
+}
+
+function json_error($error, $error_code)
+{
+    http_response_code($error_code);
+    return json_encode(['error' => $error]);
 }
