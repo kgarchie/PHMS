@@ -1,8 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
+<!-- Start Head -->
 <?php include 'partials/head.php'; ?>
+<!-- End Head -->
 <body class="wrapper">
+<!-- Start Header -->
 <?php include 'partials/header.php'; ?>
+<!-- End Header -->
 <main class="main">
     <img src="/assets/images/phms4.jpg" alt="" class="object-fit-cover w-50 position-absolute top-0 z-n1 h-100 end-0">
     <div class="container w-50 p-4 bg-body-tertiary shadow-sm position-absolute top-50 start-50 translate-middle border border-1 border-dark-subtle rounded" style="margin-top: -50px">
@@ -16,6 +20,8 @@
         </div>
     </div>
 </main>
+<!-- Start Footer -->
 <?php include 'partials/footer.php'; ?>
+<!-- End Footer -->
 </body>
 </html>

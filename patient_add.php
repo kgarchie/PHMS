@@ -22,10 +22,6 @@ function addKid($parent_id, $child_name, $child_dob, $child_category)
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $parent_name = $_POST['parent_name'];
-    $parent_email = $_POST['parent_email'];
-    $address = $_POST['address'];
-    $phone = $_POST['phone'];
     $parent_id = $_POST['parent_id'];
 
     $child_name = $_POST['child_name'];
@@ -42,10 +38,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <main class="d-flex">
     <?php include 'partials/aside.php'; ?>
     <div class="wrapper w-100">
-        <form method="post" action="/patient_add.php" class="w-50 mx-auto my-5 shadow-sm p-4 rounded">
+        <form method="post" action="/patient_add.php" class="w-50 mx-auto my-4 shadow-sm p-4 rounded">
+            <h4 class="text-lg text-capitalize" style="font-weight: 700">Add Patient</h4>
             <div class="parent">
                 <h5 class="heading">Parent</h5>
-                <div class="mb-3 row position-relative">
+                <div class="mb-2 row position-relative">
                     <div class="position-relative">
                         <input name="search_input" type="text" class="form-control" id="search" autocomplete="off"
                                aria-describedby="searchInput" placeholder="Search for parent" title="search for parent"
@@ -66,7 +63,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             }
                         </style>
                     </div>
-                    <div class="search-results position-absolute">
+                    <div class="search-results position-absolute z-3">
                         <ul class="list-group shadow">
                             <!-- search results go here -->
                         </ul>
@@ -115,9 +112,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         }
                     </style>
                     <script defer>
+                        const searchResults = document.querySelector('.search-results ul');
+
                         function searchParents(element) {
                             const term = element.value;
-                            const searchResults = document.querySelector('.search-results ul');
                             searchResults.innerHTML = '';
                             if (term.trim() === '') return
                             fetch('/api_parents_search.php', {
@@ -142,14 +140,28 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                 <div class="parent-phone">${parent.phone}</div>
                                             </div>
                                             `;
-                                        li.onclick = selectParent.bind(null, parent.id);
+                                        li.onclick = selectParent.bind(null, parent);
                                         searchResults.appendChild(li);
                                     });
                                 })
                         }
 
-                        function selectParent(parentId) {
-                            console.log(parentId);
+                        /** @param {ParentSearchResult} parent */
+                        function selectParent(parent) {
+                            document.getElementById('parent_id_input').value = parent.id;
+                            const selectedParent = document.getElementById('selectedParent');
+                            document.getElementById('search').value = parent.name;
+                            searchResults.innerHTML = '';
+                            selectedParent.innerHTML = `
+                                <div class="card-header">
+                                    <span class="card-title">${parent.name}</span>
+                                </div>
+                                <div class="card-body d-flex justify-content-between">
+                                    <h6 class="card-subtitle mb-2 text-muted">${parent.email}</h6>
+                                    <h6 class="card-subtitle mb-2 text-muted">${parent.address}</h6>
+                                    <h6 class="card-subtitle mb-2 text-muted">${parent.phone}</h6>
+                                </div>
+                            `;
                         }
                     </script>
                 </div>
@@ -158,7 +170,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         Add New Parent
                     </button>
                 </div>
-                
+                <div class="mt-3 card" id="selectedParent">
+                    <!-- selected parent goes here -->
+                </div>
             </div>
             <div class="child">
                 <h5 class="heading">Patient Details</h5>
@@ -180,6 +194,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         <option value="outpatient">Outpatient</option>
                     </select>
                 </div>
+                <input type="hidden" value="" required name="parent_id" id="parent_id_input">
                 <style>
                     .heading {
                         font-family: 'Poppins', sans-serif;
@@ -251,8 +266,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                     if (data.parent_id) {
                                         form.reset()
                                         document.querySelector('#modal').querySelector('[data-bs-dismiss]').click()
-                                        selectParent(data.parent_id)
                                         ToastSuccess('Parent Added Successfully')
+
+                                        const parent = {
+                                            id: data.parent_id,
+                                            name: formData.get('parent_name'),
+                                            email: formData.get('parent_email'),
+                                            address: formData.get('address'),
+                                            phone: formData.get('phone')
+                                        }
+
+                                        selectParent(parent)
                                     } else {
                                         ToastError('Unable to add patient')
                                     }

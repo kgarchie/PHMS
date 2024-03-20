@@ -12,7 +12,7 @@
 <main class="d-flex">
     <?php include 'partials/aside.php'; ?>
     <div class="wrapper w-100">
-        <div class="container">
+        <div class="container my-4">
             <div class="row">
                 <div class="col-6 m-auto">
                     <h4 class="mt-4 text-capitalize" style="font-weight: 700">Book an Appointment</h4>
