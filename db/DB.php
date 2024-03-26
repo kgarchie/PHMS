@@ -30,6 +30,11 @@ class Row
     {
         return isset($this->row[$key]);
     }
+
+    public function toJson()
+    {
+        return json_encode($this->row);
+    }
 }
 
 class Result

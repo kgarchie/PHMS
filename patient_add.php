@@ -253,10 +253,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <script defer>
                         function submitParentData() {
                             const form = document.getElementById('add_parent_form');
-                            const formData = new FormData(form);
+                            const parent_name = form.querySelector('[name="parent_name"]').value;
+                            const parent_email = form.querySelector('[name="parent_email"]').value;
+                            const address = form.querySelector('[name="address"]').value;
+                            const phone = form.querySelector('[name="phone"]').value;
+
                             fetch('/api_parent_add.php', {
                                 method: 'POST',
-                                body: formData
+                                contentType: 'application/x-www-form-urlencoded',
+                                body: `parent_name=${parent_name}&parent_email=${parent_email}&address=${address}&phone=${phone}`
                             }).then(response => {
                                 return response.json().catch(() => {
                                     alert('Fatal Error Occurred While Creating Parent')

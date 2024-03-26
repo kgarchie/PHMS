@@ -3,9 +3,9 @@
 <?php require_once 'mail/Mail.php'; ?>
 <?php global $db;
 
-function updatePatient($name, $dob, $parent_id, $category){
+function updatePatient($name, $dob, $category, $id){
     global $db;
-    [$result, $error] = $db->query("UPDATE kids SET name = ?, dob = ?, parent_id = ?, category = ?", $name, $dob, $parent_id, $category);
+    [$result, $error] = $db->query("UPDATE kids SET name = ?, dob = ?, category = ? WHERE id = ?", $name, $dob, $category, $id);
     if($error){
         return json_error($error, 500);
     }
@@ -14,15 +14,17 @@ function updatePatient($name, $dob, $parent_id, $category){
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    if(isset($_POST['patient_name']) && isset($_POST['patient_dob']) && isset($_POST['patient_parent_id']) && isset($_POST['patient_category'])){
-        $error = updatePatient($_POST['patient_name'], $_POST['patient_dob'], $_POST['patient_parent_id'], $_POST['patient_category']);
-        if($error){
-            echo $error;
+    if(isset($_POST['patient_name']) && isset($_POST['patient_dob']) && isset($_POST['patient_category']) && isset($_POST['patient_id'])){
+        $error = updatePatient($_POST['patient_name'], $_POST['patient_dob'], $_POST['patient_category'], $_POST['patient_id']);
+        if($error != null){
+            echo json_error($error, 500);
         } else {
             echo json_encode([
                 'message' => 'success'
             ]);
         } 
+    } else {
+        echo json_error("All fields are required", 400);
     }
 }
 ?>

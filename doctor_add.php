@@ -8,7 +8,7 @@
              $successes; ?>
 <!----------------------------------------------------------------------------------->
 <?php
-function addDoctor($name, $email, $phone, $address)
+function addDoctor($name, $email, $phone, $address): bool
 {
     global $db, $errors;
     [$result, $error] = $db->query("INSERT INTO doctors (name, email, phone, address) values (?, ?, ?, ?)", $name, $email, $phone, $address);
@@ -30,11 +30,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 
     $result = addDoctor($name, $email, $phone, $address);
-    if ($result == true) {
+    if ($result) {
         array_push($successes, "Doctor added successfully bitch");
         redirect('/doctors.php');
     } else {
-        array_push($errors, "Huston we are in trouble");
+        array_push($errors, "Huston we have a problem");
     }
 }
 
@@ -59,8 +59,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <input type="tel" class="form-control" id="phone" name="phone" autocomplete="off" required>
             </div>
             <div class="mb-3">
-                <label for="address" class="form-label">Address</label>
-                <input type="text" class="form-control" id="address" name="phone" autocomplete="off">
+                <label for="address" class="form-label">Home Address</label>
+                <input type="text" class="form-control" id="address" name="address" autocomplete="off">
             </div>
             <div class="d-flex justify-content-between align-items-center">
                 <button type="submit" class="btn btn-primary d-inline-block">Submit</button>

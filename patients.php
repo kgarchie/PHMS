@@ -85,8 +85,7 @@ if ($error) array_push($errors, $error);
                     <?php if ($result->count() > 0) ?>
                     <?php for ($i = 0; $i < $result->count(); $i++) :
                         $kid_id = $result->at($i)->get('kid_id'); ?>
-                        <tr class="table-row"
-                            data-kid_id="<?php echo $kid_id ?>">
+                        <tr class="table-row" data-kid_id="<?php echo $kid_id ?>">
                             <th scope="row"><?php echo $i + 1 ?></th>
                             <td><?php echo $result->at($i)->get('name') ?></td>
                             <td><?php echo $result->at($i)->get('dob') ?></td>
@@ -129,6 +128,26 @@ if ($error) array_push($errors, $error);
             </div>
         </div>
     </div>
+
+    <template id="edit-template">
+        <form id="edit-form">
+            <div class="mb-3">
+                <label for="name" class="form-label">Name</label>
+                <input type="text" class="form-control" id="patient_name" name="name" required>
+            </div>
+            <div class="mb-3">
+                <label for="dob" class="form-label">Date of Birth</label>
+                <input type="date" class="form-control" id="patient_dob" name="dob" required>
+            </div>
+            <div class="mb-3">
+                <label for="category" class="form-label">Category</label>
+                <select class="form-select" id="category" name="patient_category" required>
+                    <option value="outpatient">OutPatient</option>
+                    <option value="inpatient">Inpatient</option>
+                </select>
+            </div>
+        </form>
+    </template>
 </main>
 <script defer>
     const tbody = document.getElementById('tbody');
@@ -199,16 +218,81 @@ if ($error) array_push($errors, $error);
         const editButtons = tbody.querySelectorAll('svg[id^="edit_"]');
         editButtons.forEach(button => {
             button.addEventListener('click', (event) => {
-                console.log('edit clicked')
+                const patient_id = button.id.split('_')[1]
+                fetch(`/api_patient_get.php?patient_id=${patient_id}`)
+                    .then(response => {
+                        return response.json().catch(() => {
+                            alert('An error occurred while processing your request');
+                        })
+                    }).then(
+                    /** @param {Patient} data */
+                    data => {
+                        const template = document.getElementById('edit-template');
+                        const form = template.content.querySelector('form');
+                        launchModal(`Edit ${data.name}`, form.cloneNode(true).outerHTML);
+                        const editForm = document.getElementById('edit-form');
+                        editForm.name.value = data.name;
+                        editForm.dob.value = data.dob;
+                        editForm.category.value = data.category;
+
+                        document.querySelector('.modal-footer').innerHTML = `
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="submitEditForm(${patient_id})">
+                                        Close
+                                    </button>`;
+                    });
             });
         });
 
         const deleteButtons = tbody.querySelectorAll('svg[id^="delete_"]');
         deleteButtons.forEach(button => {
             button.addEventListener('click', (event) => {
-                console.log('delete clicked')
+                const patient_id = button.id.split('_')[1]
+                fetch(`/api_patient_delete.php?patient_id=${patient_id}`, {
+                    method: 'DELETE'
+                }).then(response => {
+                    return response.json().catch(() => {
+                        alert('An error occurred while processing your request');
+                    })
+                }).then(
+                    data => {
+                        if (data.message === 'success') {
+                            ToastSuccess('Patient deleted successfully');
+                            setTimeout(() => {
+                                window.location.reload();
+                            }, 500);
+                        } else {
+                            ToastError('An error occurred while processing your request');
+                        }
+                    });
             });
         });
+    }
+
+    function submitEditForm(kidId) {
+        const form = document.getElementById('edit-form');
+        const name = form.name.value;
+        const dob = form.dob.value;
+        const category = form.category.value;
+
+        fetch('/api_patient_edit.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: `patient_name=${name}&patient_dob=${dob}&patient_category=${category}&patient_id=${kidId}`
+        }).then(response => {
+            return response.json().catch(() => {
+                ToastError('An error occurred while processing your request');
+            })
+        }).then(
+            data => {
+                if (data.message === 'success') {
+                    ToastSuccess('Patient updated successfully');
+                    modal.hide();
+                } else {
+                    ToastError('An error occurred while processing your request');
+                }
+            });
     }
 
     setUpTable();

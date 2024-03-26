@@ -17,7 +17,7 @@ create table if not exists `tokens`
     `is_valid`   boolean      not null default true,
     `created_at` timestamp    not null default current_timestamp,
     `updated_at` timestamp    not null default current_timestamp,
-    foreign key (`user_id`) references `users` (`id`)
+    foreign key (`user_id`) references `users` (`id`) on delete cascade on update cascade
 );
 
 create table if not exists parents
@@ -51,7 +51,7 @@ create table kids
     category   varchar(32)  not null,
     created_at timestamp    not null default current_timestamp,
     updated_at timestamp    not null default current_timestamp,
-    foreign key (parent_id) references parents (id)
+    foreign key (parent_id) references parents (id) on delete cascade on update cascade
 );
 
 
@@ -66,8 +66,8 @@ create table appointments
     status     varchar(32) not null default 'pending',
     created_at timestamp   not null default current_timestamp,
     updated_at timestamp   not null default current_timestamp,
-    foreign key (kid_id) references kids (id),
-    foreign key (doctor_id) references users (id)
+    foreign key (kid_id) references kids (id) on delete cascade on update cascade,
+    foreign key (doctor_id) references users (id) on delete cascade on update cascade
 );
 
 create trigger if not exists [UpdateTokensLastTime]
@@ -109,6 +109,7 @@ create trigger if not exists [UpdateKidsLastTime]
     on `kids`
     for each row
 begin
+
     update `kids`
     set `updated_at` = CURRENT_TIMESTAMP
     where RowId = old.RowId;
