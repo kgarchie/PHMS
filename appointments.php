@@ -18,6 +18,7 @@ if ($error) {
     <?php include 'partials/aside.php'; ?>
     <div class="wrapper w-100">
         <div class="doctors">
+            <a class="btn btn-success" href="./appointment_add.php">New Appointment</a>
             <input name="search_input" type="text" class="form-control mb-3" id="search" autocomplete="off"
                    aria-describedby="searchInput" placeholder="Search for doctor" title="search for parent"
                    oninput="searchDoctors(this)">

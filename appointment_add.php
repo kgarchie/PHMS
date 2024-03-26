@@ -33,6 +33,8 @@ function makeAppointment($kid_id, $doctor_id, $date, $time, $reason)
 
     array_push($successes, "Appointment booked successfully");
 
+    redirect('./appointments.php');
+
 }
 
 [$doctors, $error] = $db->query("SELECT doctors.id, doctors.name FROM doctors");

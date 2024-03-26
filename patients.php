@@ -245,7 +245,7 @@ if ($error) array_push($errors, $error);
     }
 
     .table-container {
-        margin-top: -50px;
+        margin-top: -20px;
     }
 
     .actions {

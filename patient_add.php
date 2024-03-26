@@ -29,7 +29,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $child_category = $_POST['child_category'];
 
     if ($parent_id) {
-        addKid($parent_id, $child_name, $child_dob, $child_category);
+        $result = addKid($parent_id, $child_name, $child_dob, $child_category);
+        if($result)
+            redirect('./patients.php');
     } else {
         array_push($errors, "Failed to add parent");
     }
