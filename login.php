@@ -6,12 +6,16 @@ global $errors;
 global $db;
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $email = $_POST['email'];
-    $password = $_POST['password'];
-    $token = authenticate($email, $password);
-    if ($token) {
-        setAuthCookie($token);
-        redirect("/dashboard.php");
+    if (isset($_POST['email']) && isset($_POST['password'])) {
+        $email = $_POST['email'];
+        $password = $_POST['password'];
+        $token = authenticate($email, $password);
+        if ($token) {
+            setAuthCookie($token);
+            redirect("/dashboard.php");
+        }
+    } else {
+        array_push($errors, "Please fill in all fields");
     }
 }
 ?>
@@ -21,7 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <form action="login.php" method="POST" class="w-50 mx-auto mt-5 shadow-sm p-4 rounded" id="login-form">
         <div class="mb-3">
             <label for="email" class="form-label">Email address</label>
-            <input type="email" class="form-control" id="email" aria-describedby="emailHelp" name="email">
+            <input type="email" class="form-control" id="email" aria-describedby="emailHelp" name="email" autocomplete="email">
             <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
         </div>
         <div class="mb-3 position-relative">

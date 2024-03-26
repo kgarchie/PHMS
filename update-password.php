@@ -23,7 +23,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
     [$result, $error] = $db->query("UPDATE users SET password = ? WHERE id = ?", password_hash($password, PASSWORD_DEFAULT), $user_id);
     if ($error) return array_push($errors, $error);
 
-    [$result, $error] = $db->query("UPDATE tokens SET is_valid = false WHERE user_id = ?", $user_id);
+    [$result, $error] = $db->query("UPDATE tokens SET is_valid = false WHERE user_id = ? AND token = ?", $user_id, $token);
     if ($error) return array_push($errors, $error);
 
     redirect("/login.php");

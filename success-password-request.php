@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <?php include 'partials/head.php'; ?>
 <body>
@@ -36,7 +36,6 @@
         }
     </style>
 </main>
-
 <!---------------------------------------------------------------------------------->
 <?php include 'partials/footer.php'; ?>
 </body>

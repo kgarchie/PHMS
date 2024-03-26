@@ -1,7 +1,9 @@
 <?php
 
-class Row {
+class Row
+{
     private $row = null;
+
     public function __construct($row)
     {
         $this->row = $row;
@@ -18,10 +20,22 @@ class Row {
     {
         return json_encode($this->row);
     }
+
+    public function row()
+    {
+        return $this->row;
+    }
+
+    public function has($key): bool
+    {
+        return isset($this->row[$key]);
+    }
 }
 
-class Result {
+class Result
+{
     private $result = null;
+
     public function __construct(array $result)
     {
         $this->result = $result;
@@ -48,6 +62,50 @@ class Result {
     {
         return json_encode($this->result);
     }
+
+    /**
+     * @return array{Row[]}
+     */
+    public function all(): array
+    {
+        return $this->result;
+    }
+
+    public function count(): int
+    {
+        return count($this->result);
+    }
+
+    public function isEmpty(): bool
+    {
+        return $this->count() === 0;
+    }
+
+    public function pop(): Row
+    {
+        return new Row(array_pop($this->result));
+    }
+
+    public function toJson()
+    {
+        return json_encode($this->result);
+    }
+
+    public function groupBy($key): array
+    {
+        $grouped = [];
+        foreach ($this->result as $rowArray) {
+            $row = new Row($rowArray);
+            if ($row->has($key)) {
+                $groupedValue = $row->get($key);
+                if (!isset($grouped[$groupedValue])) {
+                    $grouped[$groupedValue] = [];
+                }
+                $grouped[$groupedValue][] = $rowArray;
+            }
+        }
+        return $grouped;
+    }
 }
 
 class DB
@@ -63,7 +121,7 @@ class DB
             $this->db = new PDO("sqlite:$location");
             $this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         } catch (PDOException $e) {
-            die("Unable to connect to database");
+            throw new Exception($e->getMessage());
         }
     }
 
@@ -73,10 +131,10 @@ class DB
     }
 
     /**
+     * @return array{?Result, ?string}
+     *
      * @example
      * [$result, $error] = $db->query("INSERT INTO tname VALUES ?, ?, ?", $value1, $value2, $value3)
-     *
-     * @return array{?Result, ?string}
      */
     function query(string $sql, ...$params): array
     {
@@ -102,4 +160,6 @@ class DB
     }
 }
 
+
 $db = new DB("./db/db.sqlite");
+
