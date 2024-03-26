@@ -8,7 +8,7 @@
 <?php global $errors, $db, $mail, $successes; ?>
 <!----------------------------------------------------------------------------------->
 <?php
-[$result, $error] = $db->query("SELECT kids.id as kid_id, kids.name, kids.dob, kids.category, parents.name as parent_name, parents.id as parent_id FROM kids JOIN parents ON kids.parent_id = parents.id");
+[$result, $error] = $db->query("SELECT doctors.id, doctors.name, doctors.email, doctors.phone FROM doctors");
 if ($error) array_push($errors, $error);
 ?>
 <main class="d-flex">
@@ -19,14 +19,14 @@ if ($error) array_push($errors, $error);
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M18.031 16.6168L22.3137 20.8995L20.8995 22.3137L16.6168 18.031C15.0769 19.263 13.124 20 11 20C6.032 20 2 15.968 2 11C2 6.032 6.032 2 11 2C15.968 2 20 6.032 20 11C20 13.124 19.263 15.0769 18.031 16.6168ZM16.0247 15.8748C17.2475 14.6146 18 12.8956 18 11C18 7.1325 14.8675 4 11 4C7.1325 4 4 7.1325 4 11C4 14.8675 7.1325 18 11 18C12.8956 18 14.6146 17.2475 15.8748 16.0247L16.0247 15.8748Z"></path>
                 </svg>
-                <input placeholder="search patient" class="search-input shadow-sm" type="text" id="search_input"
+                <input placeholder="Search Doctor" class="search-input shadow-sm" type="text" id="search_input"
                        name="search_input" title="search">
                 <script defer>
                     const searchInput = document.getElementById('search_input');
                     searchInput.addEventListener('input', () => {
                         const search = searchInput.value;
                         const tbody = document.getElementById('tbody');
-                        fetch('/api_patients_search.php', {
+                        fetch('/api_doctors_search.php', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/x-www-form-urlencoded'
@@ -37,23 +37,23 @@ if ($error) array_push($errors, $error);
                                 alert('An error occurred while processing your request');
                             })
                         }).then(
-                            /** @param {Patient[]} data */
+                            /** @param {Doctor[]} data */
                             data => {
                                 tbody.innerHTML = ``;
-                                data.forEach((kid, index) => {
+                                data.forEach((doctor, index) => {
                                     const tr = document.createElement('tr');
                                     tr.classList.add('table-row');
                                     tr.innerHTML = "" +
                                         "<th scope='row'>" + (index + 1) + "</th>" +
-                                        "<td>" + kid.name + "</td>" +
-                                        "<td>" + kid.dob + "</td>" +
-                                        "<td class='text-capitalize'>" + kid.category + "</td>" +
-                                        "<td class='color-hover' data-parent_id='" + kid.parent_id + "' onclick='openParent(event)'>" + kid.parent_name + "</td>" +
+                                        "<td>" + doctor.name + "</td>" +
+                                        "<td>" + doctor.email + "</td>" +
+                                        "<td class='text-capitalize'>" + doctor.phone + "</td>" +
+                                        "<td>" + (doctor.address ? doctor.address : 'No Address') + "</td>" +
                                         "<td class='actions'>" +
-                                        "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='currentColor' id='edit_" + kid.kid_id + "'>" +
+                                        "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='currentColor' id='edit_" + doctor.id + "'>" +
                                         "<path d='M5 18.89H6.41421L15.7279 9.57627L14.3137 8.16206L5 17.4758V18.89ZM21 20.89H3V16.6473L16.435 3.21231C16.8256 2.82179 17.4587 2.82179 17.8492 3.21231L20.6777 6.04074C21.0682 6.43126 21.0682 7.06443 20.6777 7.45495L9.24264 18.89H21V20.89ZM15.7279 6.74785L17.1421 8.16206L18.5563 6.74785L17.1421 5.33363L15.7279 6.74785Z'></path>" +
                                         "</svg>" +
-                                        "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='currentColor' id='delete_" + kid.kid_id + "'>" +
+                                        "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='currentColor' id='delete_" + doctor.id + "'>" +
                                         "<path d='M17 6H22V8H20V21C20 21.5523 19.5523 22 19 22H5C4.44772 22 4 21.5523 4 21V8H2V6H7V3C7 2.44772 7.44772 2 8 2H16C16.5523 2 17 2.44772 17 3V6ZM18 8H6V20H18V8ZM13.4142 13.9997L15.182 15.7675L13.7678 17.1817L12 15.4139L10.2322 17.1817L8.81802 15.7675L10.5858 13.9997L8.81802 12.232L10.2322 10.8178L12 12.5855L13.7678 10.8178L15.182 12.232L13.4142 13.9997ZM9 4V6H15V4H9Z'></path>" +
                                         "</svg>" +
                                         "</td>";
@@ -68,38 +68,42 @@ if ($error) array_push($errors, $error);
 
             <div class="table-container">
                 <div class="mt-5 mb-2">
-                    <a class="btn btn-success" href="/patient_add.php" style="border-radius: 2px">Add Patient</a>
+                    <a class="btn btn-success" href="/doctor_add.php" style="border-radius: 2px">Add Doctor</a>
                 </div>
                 <table class="table custom-table shadow table-responsive table-bordered">
                     <thead>
                     <tr>
                         <th scope="col">#</th>
                         <th scope="col">Name</th>
-                        <th scope="col">Age</th>
-                        <th scope="col">Category</th>
-                        <th scope="col">Parent</th>
+                        <th scope="col">Email</th>
+                        <th scope="col">Phone</th>
+                        <th scope="col">Address</th>
                         <th>Actions</th>
                     </tr>
                     </thead>
                     <tbody id="tbody">
                     <?php if ($result->count() > 0) ?>
                     <?php for ($i = 0; $i < $result->count(); $i++) :
-                        $kid_id = $result->at($i)->get('kid_id'); ?>
-                        <tr class="table-row"
-                            data-kid_id="<?php echo $kid_id ?>">
+                        $doctor_id = $result->at($i)->get('id'); ?>
+                        <tr class="table-row">
                             <th scope="row"><?php echo $i + 1 ?></th>
                             <td><?php echo $result->at($i)->get('name') ?></td>
-                            <td><?php echo $result->at($i)->get('dob') ?></td>
-                            <td class="text-capitalize"><?php echo $result->at($i)->get('category') ?></td>
-                            <td class="color-hover" data-parent_id="<?php echo $result->at($i)->get('parent_id') ?>"
-                                onclick="openParent(event)"><?php echo $result->at($i)->get('parent_name') ?></td>
+                            <td><?php echo $result->at($i)->get('email') ?></td>
+                            <td><?php echo $result->at($i)->get('phone') ?></td>
+                            <td class="text-capitalize"><?php
+                                if ($result->at($i)->get('address') !== null) {
+                                    echo $result->at($i)->get('address');
+                                } else {
+                                    echo "No Address";
+                                }
+                                ?></td>
                             <td class="actions">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
-                                     fill="currentColor" <?php echo 'id="edit_' . $kid_id . '"' ?>>
+                                     fill="currentColor" <?php echo 'id="edit_' . $doctor_id . '"' ?>>
                                     <path d="M5 18.89H6.41421L15.7279 9.57627L14.3137 8.16206L5 17.4758V18.89ZM21 20.89H3V16.6473L16.435 3.21231C16.8256 2.82179 17.4587 2.82179 17.8492 3.21231L20.6777 6.04074C21.0682 6.43126 21.0682 7.06443 20.6777 7.45495L9.24264 18.89H21V20.89ZM15.7279 6.74785L17.1421 8.16206L18.5563 6.74785L17.1421 5.33363L15.7279 6.74785Z"></path>
                                 </svg>
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
-                                     fill="currentColor" <?php echo 'id="delete_' . $kid_id . '"' ?>>
+                                     fill="currentColor" <?php echo 'id="delete_' . $doctor_id . '"' ?>>
                                     <path d="M17 6H22V8H20V21C20 21.5523 19.5523 22 19 22H5C4.44772 22 4 21.5523 4 21V8H2V6H7V3C7 2.44772 7.44772 2 8 2H16C16.5523 2 17 2.44772 17 3V6ZM18 8H6V20H18V8ZM13.4142 13.9997L15.182 15.7675L13.7678 17.1817L12 15.4139L10.2322 17.1817L8.81802 15.7675L10.5858 13.9997L8.81802 12.232L10.2322 10.8178L12 12.5855L13.7678 10.8178L15.182 12.232L13.4142 13.9997ZM9 4V6H15V4H9Z"></path>
                                 </svg>
                             </td>
@@ -131,63 +135,11 @@ if ($error) array_push($errors, $error);
     </div>
 </main>
 <script defer>
-    const tbody = document.getElementById('tbody');
-    const modal = new bootstrap.Modal(document.getElementById('modal'));
-
-    /**
-     * @param {string} title
-     * @param {string} content
-     */
-    function launchModal(title, content) {
-        modal.show();
-        const modalTitle = modal._element.querySelector('.modal-title');
-        const modalBody = modal._element.querySelector('.modal-body');
-        modalTitle.textContent = title;
-        modalBody.innerHTML = content;
-    }
-
-
-    function openParent(event) {
-        stopEvent(event);
-        fetch(`/api_parent_details.php?parent_id=${event.target.dataset.parent_id}`)
-            .then(response => {
-                return response.json().catch(() => {
-                    alert('An error occurred while processing your request');
-                })
-            }).then(
-            /** @param {ParentAndKids} data */
-            data => {
-                const {
-                    parent,
-                    kids
-                } = data;
-                const parentContent = `
-                    <div class="card">
-                        <div class="card-body">
-                            <p class="card-text"><strong>Email:</strong> ${parent.email}</p>
-                            <p class="card-text"><strong>Phone:</strong> ${parent.phone}</p>
-                            <p class="card-text"><strong>Address:</strong> ${parent.address}</p>
-                        </div>
-                    </div>`;
-                const kidsContent = `
-                    <div class="card mt-3">
-                        <div class="card-body">
-                            <h5 class="card-title">Kids</h5>
-                            <ul class="list-group list-group-flush">
-                                ${kids.map(kid => `<li class="list-group-item">${kid.name}</li>`).join('')}
-                            </ul>
-                        </div>
-                    </div>`;
-                launchModal(parent.name, parentContent + kidsContent);
-            });
-    }
-
     function setUpTable() {
         const tableRows = tbody.querySelectorAll('.table-row');
         tableRows.forEach(row => {
             row.addEventListener('click', () => {
-                const kidId = row.dataset.kid_id;
-                window.location.href = `/patient_details.php?kid_id=${kidId}`;
+
             })
         })
 

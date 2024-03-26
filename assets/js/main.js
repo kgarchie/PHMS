@@ -70,6 +70,17 @@
  * @property {Kid[]} kids - An array of kid objects.
  */
 
+/**
+ * @typedef {Object} Doctor
+ * @property {number} id
+ * @property {string} name
+ * @property {string} email
+ * @property {phone} phone
+ * @property {string} address
+ */
+
+
+
 function Title(title) {
     document.title = `PHMS | ${title}`
 }
@@ -123,4 +134,9 @@ function snuffToasts() {
             toast.remove();
         }, 5000);
     });
+}
+
+function stopEvent(event) {
+    event.stopPropagation();
+    event.preventDefault();
 }

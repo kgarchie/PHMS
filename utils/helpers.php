@@ -117,3 +117,7 @@ function json_error($error, $error_code)
     http_response_code($error_code);
     return json_encode(['error' => $error]);
 }
+
+function sendReminders()
+{
+}

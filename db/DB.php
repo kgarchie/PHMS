@@ -25,6 +25,11 @@ class Row
     {
         return $this->row;
     }
+
+    public function has($key): bool
+    {
+        return isset($this->row[$key]);
+    }
 }
 
 class Result
@@ -76,10 +81,30 @@ class Result
         return $this->count() === 0;
     }
 
+    public function pop(): Row
+    {
+        return new Row(array_pop($this->result));
+    }
 
     public function toJson()
     {
         return json_encode($this->result);
+    }
+
+    public function groupBy($key): array
+    {
+        $grouped = [];
+        foreach ($this->result as $rowArray) {
+            $row = new Row($rowArray);
+            if ($row->has($key)) {
+                $groupedValue = $row->get($key);
+                if (!isset($grouped[$groupedValue])) {
+                    $grouped[$groupedValue] = [];
+                }
+                $grouped[$groupedValue][] = $rowArray;
+            }
+        }
+        return $grouped;
     }
 }
 

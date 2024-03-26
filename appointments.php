@@ -8,55 +8,83 @@
              $successes; ?>
 <!----------------------------------------------------------------------------------->
 <?php
+[$doctors, $error] = $db->query("SELECT * FROM doctors");
+if ($error) {
+    array_push($errors, $error);
+}
+
 ?>
 <main class="d-flex">
     <?php include 'partials/aside.php'; ?>
     <div class="wrapper w-100">
-        <div class="container my-4">
-            <div class="row">
-                <div class="col-6 m-auto">
-                    <h4 class="mt-4 text-capitalize" style="font-weight: 700">Book an Appointment</h4>
-                    <form action="/appointments.php" method="post" class="card p-4">
-                        <div class="row mt-2">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="date">Date</label>
-                                    <input type="date" class="form-control" id="date" name="date" required>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="time">Time</label>
-                                    <input type="time" class="form-control" id="time" name="time" required>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-group mt-2">
-                            <label for="doctor">Doctor</label>
-                            <select class="form-control" id="doctor" name="doctor" required>
-                                <option value="">Select Doctor</option>
-                                <option value="1">Dr. John Doe</option>
-                                <option value="2">Dr. Jane Doe</option>
-                                <option value="3">Dr. Richard Roe</option>
-                            </select>
-                        </div>
-                        <div class="form-group mt-2">
-                            <label for="reason">Reason</label>
-                            <textarea class="form-control" id="reason" name="reason" required></textarea>
-                        </div>
-                        <div class="form-group mt-2">
-                            <label for="email">Email</label>
-                            <input type="email" class="form-control" id="email" name="email" required>
-                        </div>
-                        <div class="btn-group mt-2">
-                            <button type="submit" class="btn btn-primary">Book</button>
-                        </div>
-                    </form>
-                </div>
+        <div class="doctors">
+            <input name="search_input" type="text" class="form-control mb-3" id="search" autocomplete="off"
+                   aria-describedby="searchInput" placeholder="Search for doctor" title="search for parent"
+                   oninput="searchDoctors(this)">
+            <div class="doctors-list">
+                <?php for ($i = 0; $i < $doctors->count(); $i++) : ?>
+                    <a class="doctor" href="/doctor_appointments.php?doctor_id=<?php echo $doctors->at($i)->get('id') ?>">
+                        <h3><?php echo $doctors->at($i)->get('name') ?></h3>
+                        <p><?php echo $doctors->at($i)->get('phone') ?></p>
+                        <p><?php echo $doctors->at($i)->get('email') ?></p>
+                    </a>
+                <?php endfor; ?>
             </div>
         </div>
     </div>
 </main>
+<style>
+    .doctors {
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        max-width: 1000px;
+        margin: 2rem auto auto;
+        padding: 2rem;
+    }
+
+    .doctors-list {
+        display: flex;
+        flex-direction: column;
+        border: 4px solid #f1f1f1;
+    }
+
+    .doctor {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        padding: 1rem;
+        cursor: pointer;
+    }
+
+    .doctor:nth-child(odd) {
+        background-color: #f9f9f9;
+    }
+
+    .doctor:hover {
+        background-color: #dcdcdc;
+    }
+
+    .doctor > * {
+        display: flex;
+        align-items: center;
+        height: 100%;
+    }
+
+    .doctor h3 {
+        font-size: 1.15rem;
+        font-weight: 500;
+    }
+</style>
+<script>
+    function searchDoctors(input) {
+        const doctors = document.querySelectorAll('.doctor');
+        doctors.forEach(doctor => {
+            if (doctor.innerText.toLowerCase().includes(input.value.toLowerCase())) {
+                doctor.style.display = 'grid';
+            } else {
+                doctor.style.display = 'none';
+            }
+        });
+    }
+</script>
 
 <!---------------------------------------------------------------------------------->
 <?php include 'partials/footer.php'; ?>

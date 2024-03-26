@@ -2,7 +2,7 @@
     <span class="aside-nav-header mb-3">Navigation</span>
     <ul class="aside-nav">
         <li><a href="/patients.php">Patients</a></li>
-        <li><a href="#">Doctors</a></li>
+        <li><a href="/doctors.php">Doctors</a></li>
         <li><a href="/appointments.php">Appointments</a></li>
         <li><a href="#">Prescriptions</a></li>
         <li><a href="#">Vaccinations</a></li>
