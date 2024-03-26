@@ -20,7 +20,7 @@ create table if not exists `tokens`
     foreign key (`user_id`) references `users` (`id`)
 );
 
-create table parents
+create table if not exists parents
 (
     id         integer      not null primary key,
     name       varchar(255) not null,

@@ -1,6 +1,7 @@
 {
     "recommendations": [
         "brapifra.phpserver",
-        "bmewburn.vscode-intelephense-client"
+        "bmewburn.vscode-intelephense-client",
+        "alexcvzz.vscode-sqlite"
     ]
 }
