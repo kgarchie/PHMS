@@ -184,7 +184,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <input type="text" class="form-control" id="prescription" name="prescription" autocomplete="off">
             </div>
             <input type="hidden" name="kid_id" value="<?php echo $p_id ?>">
-            <input type="hidden" id="doctor_id_input">
+            <input type="hidden" id="doctor_id_input" name="doctor_id">
             <div class="d-flex justify-content-between align-items-center">
                 <button type="submit" class="btn btn-primary d-inline-block">Submit</button>
             </div>
