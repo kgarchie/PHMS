@@ -4,9 +4,7 @@
         <li><a href="/patients.php">Patients</a></li>
         <li><a href="/doctors.php">Doctors</a></li>
         <li><a href="/appointments.php">Appointments</a></li>
-        <li><a href="#">Prescriptions</a></li>
-        <li><a href="#">Vaccinations</a></li>
-        <li><a href="#">Labs</a></li>
+        <li><a href="/vaccinations.php">Vaccinations</a></li>
     </ul>
 </div>
 <style>

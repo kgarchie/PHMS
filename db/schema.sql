@@ -31,7 +31,7 @@ create table if not exists parents
     updated_at timestamp    not null default current_timestamp
 );
 
-create table doctors
+create table if not exists doctors
 (
     id         integer      not null primary key,
     name       varchar(255) not null,
@@ -42,7 +42,7 @@ create table doctors
     updated_at timestamp    not null default current_timestamp
 );
 
-create table kids
+create table if not exists kids
 (
     id         integer      not null primary key,
     name       varchar(255) not null,
@@ -55,7 +55,7 @@ create table kids
 );
 
 
-create table appointments
+create table if not exists appointments
 (
     id         integer     not null primary key,
     kid_id     integer     not null,
@@ -68,6 +68,28 @@ create table appointments
     updated_at timestamp   not null default current_timestamp,
     foreign key (kid_id) references kids (id) on delete cascade on update cascade,
     foreign key (doctor_id) references users (id) on delete cascade on update cascade
+);
+
+create table if not exists vaccines
+(
+    id          integer      not null primary key,
+    name        varchar(255) not null,
+    description text,
+    created_at  timestamp    not null default current_timestamp,
+    updated_at  timestamp    not null default current_timestamp
+);
+
+create table if not exists vaccinations
+(
+    id         integer   not null primary key,
+    kid_id     integer   not null,
+    date       date      not null,
+    time       time      not null,
+    vaccine_id integer   not null,
+    is_done    boolean   not null default false,
+    created_at timestamp not null default current_timestamp,
+    updated_at timestamp not null default current_timestamp,
+    foreign key (kid_id) references kids (id) on delete cascade on update cascade
 );
 
 create trigger if not exists [UpdateTokensLastTime]
@@ -133,6 +155,28 @@ create trigger if not exists [UpdateDoctorsLastTime]
     for each row
 begin
     update `doctors`
+    set `updated_at` = CURRENT_TIMESTAMP
+    where RowId = old.RowId;
+end;
+
+create trigger if not exists [UpdateVaccinationsLastTime]
+    after
+        update
+    on `vaccinations`
+    for each row
+begin
+    update `vaccinations`
+    set `updated_at` = CURRENT_TIMESTAMP
+    where RowId = old.RowId;
+end;
+
+create trigger if not exists [UpdateVaccinesLastTime]
+    after
+        update
+    on `vaccines`
+    for each row
+begin
+    update `vaccines`
     set `updated_at` = CURRENT_TIMESTAMP
     where RowId = old.RowId;
 end;
