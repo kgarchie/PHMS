@@ -14,9 +14,13 @@
 
             if ($token) {
                 $body = "Click <a href='$origin/update-password.php?token=$token'>here</a> to reset your password";
-                $mail->send($email, "Password Reset", $body, true);
+                [$success, $error] = $mail->send($email, "Password Reset", $body);
 
-                redirect("success-password-request.php");
+                if ($success) {
+                    redirect("success-password-request.php");
+                } else {
+                    array_push($errors, $error);
+                }
             }
         } else {
             array_push($errors, "Please fill in all fields");

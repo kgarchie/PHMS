@@ -21,6 +21,18 @@ class Mail
             'port' => 587,
             'from' => 'trollyusertroller@gmail.com'
         ];
+        $this->setUp();
+    }
+
+    private function setUp()
+    {
+        $this->mailer->isSMTP();
+        $this->mailer->Host = $this->config['host'];
+        $this->mailer->SMTPAuth = true;
+        $this->mailer->Username = $this->config['username'];
+        $this->mailer->Password = $this->config['password'];
+        $this->mailer->SMTPSecure = $this->config['secure'];
+        $this->mailer->Port = $this->config['port'];
     }
 
     /**
@@ -32,14 +44,13 @@ class Mail
      */
     public function send($to, $subject, $body): array
     {
-        $this->mailer->isSMTP();
-        $this->mailer->Host = $this->config['host'];
-        $this->mailer->SMTPAuth = true;
-        $this->mailer->Username = $this->config['username'];
-        $this->mailer->Password = $this->config['password'];
-        $this->mailer->SMTPSecure = $this->config['secure'];
-        $this->mailer->Port = $this->config['port'];
-
+        $this->mailer->SMTPOptions = array(
+            'ssl' => array(
+                'verify_peer' => false,
+                'verify_peer_name' => true,
+                'allow_self_signed' => false
+            )
+        );
         try {
             $this->mailer->setFrom($this->config['from']);
             $this->mailer->addAddress($to);
@@ -48,7 +59,8 @@ class Mail
             $this->mailer->Subject = $subject;
             $this->mailer->Body = $body;
 
-            $this->mailer->send();
+            $success = $this->mailer->send();
+            if (!$success) return [false, $this->mailer->ErrorInfo];
         } catch (Exception $e) {
             return [false, $e->getMessage()];
         }
