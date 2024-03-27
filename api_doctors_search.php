@@ -8,8 +8,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 
     $search = $_POST['search_input'];
-    // TODO: Show only available doctors.
-    [$result, $error] = $db->query("SELECT doctors.id, doctors.name, doctors.email, doctors.phone FROM doctors WHERE doctors.name LIKE ? OR doctors.email LIKE ? OR doctors.phone LIKE ?", "%$search%", "%$search%", "%$search%");
+    [$result, $error] = $db->query("SELECT doctors.id, doctors.name, doctors.email, doctors.phone, doctors.address FROM doctors WHERE doctors.name LIKE ? OR doctors.email LIKE ? OR doctors.phone LIKE ?", "%$search%", "%$search%", "%$search%");
     if ($error) {
         return json_error($error, 500);
     }

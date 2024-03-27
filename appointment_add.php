@@ -28,7 +28,7 @@ function makeAppointment($kid_id, $doctor_id, $date, $time, $reason)
     $doctor_name = $doctor->first()->get('name');
     $doctor_email = $doctor->first()->get('email');
 
-    $body = "Hello Dr. $doctor_name, $kid_name has booked an vaccine with you on $date at $time for $reason";
+    $body = "Hello Dr. $doctor_name, $kid_name has booked an appointment with you on $date at $time for $reason";
     $mail->send($doctor_email, "New Appointment", $body);
 
     array_push($successes, "Appointment booked successfully");

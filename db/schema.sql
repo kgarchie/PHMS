@@ -70,6 +70,18 @@ create table if not exists appointments
     foreign key (doctor_id) references users (id) on delete cascade on update cascade
 );
 
+create table if not exists prescriptions
+(
+    id           integer   not null primary key,
+    kid_id       integer   not null,
+    doctor_id    integer   not null,
+    prescription text      not null,
+    created_at   timestamp not null default current_timestamp,
+    updated_at   timestamp not null default current_timestamp,
+    foreign key (kid_id) references kids (id) on delete cascade on update cascade,
+    foreign key (doctor_id) references users (id) on delete cascade on update cascade
+);
+
 create table if not exists vaccines
 (
     id          integer      not null primary key,

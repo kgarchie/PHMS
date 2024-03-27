@@ -8,38 +8,41 @@
              $successes; ?>
 <!----------------------------------------------------------------------------------->
 <?php
-function getVaccinations($id)
+function getPatientDetails($kid_id)
 {
     global $errors, $db;
-    [$result, $error] = $db->query("SELECT * FROM vaccinations WHERE id = ?", $id);
+    [$result, $error] = $db->query("SELECT kids.id, kids.name, kids.dob, parents.name, parents.email, parents.phone FROM kids JOIN parents ON kids.parent_id = parents.id WHERE kids.id = ?", $kid_id);
     if ($error) {
         array_push($errors, $error);
         return null;
     }
 
-    return $result;
+    return $result->first();
 }
 
-
-if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    $patient_id = $_GET['patient_id'];
-    $vaccines = getVaccinations($patient_id);
+if($_SERVER['REQUEST_METHOD'] == 'GET'){
+    $user_id = $_GET['kid_id'];
+    [$appointments, $error] = $db->query("SELECT * FROM appointments WHERE kid_id = ?", $user_id);
+    if ($error) {
+        array_push($errors, $error);
+    }
+    $db_appointments = $appointments->groupBy('date');
 }
 ?>
 <main class="d-flex">
     <?php include 'partials/aside.php'; ?>
     <div class="wrapper w-100">
-        <?php if (isset($vaccines)) { ?>
+        <?php if (isset($db_appointments)) { ?>
             <div class="wrapper">
-                <h3 class="heading mt-3 mt-0">Vaccinations</h3>
-                <a class="btn btn-success mt-3" href="./vaccination_add.php">New Vaccination Appointment</a>
-                <?php foreach ($vaccines as $date => $vaccinations) { ?>
+                <h3 class="heading mt-3 mt-0">Appointments</h3>
+                <a class="btn btn-success mt-3" href="./appointment_add.php">New Appointment</a>
+                <?php foreach ($db_appointments as $date => $appointments) { ?>
                     <h3 class="heading date mt-4"><span><?php echo $date ?></span></h3>
                     <div class="appointments">
-                        <?php foreach ($vaccinations as $vaccine) { ?>
-                            <?php $kid = getPatientDetails($vaccine['kid_id']); ?>
+                        <?php foreach ($appointments as $appointment) { ?>
+                            <?php $kid = getPatientDetails($appointment['kid_id']); ?>
                             <div class="w-100 h-100 position-relative">
-                                <div class="hr"><span><?php echo $vaccine['time'] ?></span></div>
+                                <div class="hr"><span><?php echo $appointment['time'] ?></span></div>
                             </div>
                             <div class="appointment">
                                 <div class="appointment-details">
@@ -48,8 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
                                     <small class="phone">Parent Phone: <?php echo $kid->get('phone') ?></small>
                                 </div>
                                 <div class="reason">
-                                    <span class="fw-bold"><?php echo getVaccine($vaccine['vaccine_id'])->get('name') ?>:</span><br>
-                                    <small class="fw-bold"><?php echo getVaccine($vaccine['vaccine_id'])->get('description') ?></small><br>
+                                    <p><?php echo $appointment['reason'] ?></p>
                                 </div>
                             </div>
                         <?php } ?>
@@ -74,7 +76,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         background-color: #f4f4f4;
     }
 
-
+    .wrapper {
+        max-width: 1000px;
+        margin: auto;
+        background-color: #ffffff;
+        padding: 1rem 2rem;
+        border-radius: 5px;
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+    }
 
     .appointment {
         display: flex;
