@@ -259,7 +259,7 @@ if ($error) array_push($errors, $error);
                             ToastSuccess('Patient deleted successfully');
                             setTimeout(() => {
                                 window.location.reload();
-                            }, 500);
+                            }, 100);
                         } else {
                             ToastError('An error occurred while processing your request');
                         }
@@ -289,6 +289,7 @@ if ($error) array_push($errors, $error);
                 if (data.message === 'success') {
                     ToastSuccess('Patient updated successfully');
                     modal.hide();
+                    location.reload();
                 } else {
                     ToastError('An error occurred while processing your request');
                 }

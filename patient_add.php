@@ -253,18 +253,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <script defer>
                         function submitParentData() {
                             const form = document.getElementById('add_parent_form');
-                            const parent_name = form.querySelector('[name="parent_name"]').value;
-                            const parent_email = form.querySelector('[name="parent_email"]').value;
-                            const address = form.querySelector('[name="address"]').value;
-                            const phone = form.querySelector('[name="phone"]').value;
-
+                            const formData = new FormData(form);
                             fetch('/api_parent_add.php', {
                                 method: 'POST',
                                 contentType: 'application/x-www-form-urlencoded',
-                                body: `parent_name=${parent_name}&parent_email=${parent_email}&address=${address}&phone=${phone}`
+                                body: formData
                             }).then(response => {
                                 return response.json().catch(() => {
-                                    alert('Fatal Error Occurred While Creating Parent')
+                                    ToastError('Fatal Error Occurred While Creating Parent')
                                     return null
                                 })
                             }).then(
@@ -285,7 +281,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                                         selectParent(parent)
                                     } else {
-                                        ToastError('Unable to add patient')
+                                        ToastError('Unable to add parent')
                                     }
                                 }).catch(console.error)
                         }
