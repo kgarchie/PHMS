@@ -99,10 +99,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         background-color: #f4f4f4;
     }
 
-    .doctor-name span::before {
-        content: "Dr. ";
-    }
-
     .wrapper {
         max-width: 1000px;
         margin: auto;

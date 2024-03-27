@@ -50,7 +50,7 @@ class Mail
 
             $this->mailer->send();
         } catch (Exception $e) {
-            return [null, $e->getMessage()];
+            return [false, $e->getMessage()];
         }
 
         return [true, null];
