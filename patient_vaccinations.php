@@ -74,7 +74,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         background-color: #f4f4f4;
     }
 
-
+    .wrapper {
+        max-width: 1000px;
+        margin: auto;
+        background-color: #ffffff;
+        padding: 1rem 2rem;
+        border-radius: 5px;
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+    }
 
     .appointment {
         display: flex;

@@ -43,22 +43,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         <div class="wrapper container">
             <a class="btn btn-success mt-3" href="prescription_add.php?patient_id=<?php echo $patient_id ?>">New
                 Prescription</a>
-            <?php $kid = getPatientDetails($prescriptions->first()->get('id')); ?>
-            <h4 class="heading mt-3 mb-2"><?php echo $kid->get('name') ?></h4>
-            <?php for ($i = 0; $i < $prescriptions->count(); $i++) { ?>
-                <?php $prescription = $prescriptions->at($i) ?>
-                <div class="card">
-                    <h5 class="card-header">
-                        <?php
-                        $datetime = $prescription->get('created_at');
-                        $date = date_create($datetime);
-                        echo date_format($date, 'd-m-Y H:i:s');
-                        ?>
-                    </h5>
-                    <div class="card-body">
-                        <p class="card-text"><?php echo $prescription->get('prescription') ?></p>
+            <?php if ($prescriptions->first() != null) { ?>
+                <?php $kid = getPatientDetails($prescriptions->first()->get('id')); ?>
+
+                <h4 class="heading mt-3 mb-2"><?php echo $kid->get('name') ?></h4>
+                <?php for ($i = 0; $i < $prescriptions->count(); $i++) { ?>
+                    <?php $prescription = $prescriptions->at($i) ?>
+                    <div class="card">
+                        <h5 class="card-header">
+                            <?php
+                            $datetime = $prescription->get('created_at');
+                            $date = date_create($datetime);
+                            echo date_format($date, 'd-m-Y H:i:s');
+                            ?>
+                        </h5>
+                        <div class="card-body">
+                            <p class="card-text"><?php echo $prescription->get('prescription') ?></p>
+                        </div>
                     </div>
-                </div>
+                <?php } ?>
             <?php } ?>
         </div>
     </div>

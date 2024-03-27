@@ -162,6 +162,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         padding: 0.25rem 0.5rem;
     }
 
+
+
     .date {
         font-size: 1rem;
         margin-bottom: -0.5rem;
